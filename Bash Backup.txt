@@ -1,16 +1,39 @@
 #!/bin/bash
 
-# Variables
-SOURCE_DIR="/path/to/source/directory"
-BACKUP_DIR="/path/to/backup/directory"
-DATE=$(date +"%Y%m%d%H%M%S")
-BACKUP_FILE="backup-$DATE.tar.gz"
+# Directories
+Dir1="/path to directory1"
+Dir2="/path to directory2"
+Dir3="/path to directory3"
 
-# Create backup directory if it doesn't exist
-mkdir -p "$BACKUP_DIR"
+# Choose backup destination
+Backup_Location="/path to destination"
 
-# Create a compressed archive of the source directory
-tar -czf "$BACKUP_DIR/$BACKUP_FILE" -C "$SOURCE_DIR" .
+# Make timestamp for date
+Timestamp=$(date +"%Y-%m-%d")
 
-# Optional: Print a message indicating completion
-echo "Backup of $SOURCE_DIR completed successfully. Backup file: $BACKUP_DIR/$BACKUP_FILE"
+# Backup directory inside destination 
+Backup_dir="${Backup_Location}/backup_${Timestamp}"
+
+# Make this directory
+mkdir -p "$Backup_dir"
+
+# Backup function
+backup_func(){
+ local Dir=$1
+ local DirBase=$(basename "$Dir")   # basename command takes the path and returns final component
+ tar -czf "${Backup_dir}/${DirBase}_${Timestamp}.tar.gz" "$DirBase"
+        #   Backup_Directory_Path/backup_DateOfBackup/DirectoryName_DateOfBackup.tar.gz   
+	      #  $DirBase : this the file to be archived 
+}
+
+# Passing directories to the function 
+backup_func "$Dir1"
+backup_func "$Dir2"
+backup_func "$Dir3"
+
+
+# Delete any backup older than 7 days
+find "$BACKUP_DEST" -type d -mtime +7 -exec rm -rf {} \;
+
+
+echo "Backup completed successfully!"
